@@ -27,7 +27,7 @@ const Summary = () => {
   }, [searchParams, removeAll]);
 
   const totalPrice = items.reduce((total, item) => {
-    return total + Number(item.price);
+    return total + item.book.price * item.quantity;
   }, 0);
 
   const onCheckout = async () => {

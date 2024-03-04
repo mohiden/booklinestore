@@ -16,6 +16,7 @@ export interface IFormData {
   address: string;
   paymentMethod: 'Zaad' | 'Edahab';
   deliveryOption: 'delivery' | 'pickup';
+  currencyType: 'USD' | 'SLSH';
 }
 
 const CheckoutForm: React.FC<CheckoutFormProps> = ({onSubmit, totalAmount}) => {
@@ -28,6 +29,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({onSubmit, totalAmount}) => {
     address: '',
     paymentMethod: 'Zaad',
     deliveryOption: 'pickup',
+    currencyType: 'SLSH',
   });
 
   const handleChange = (
@@ -161,6 +163,31 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({onSubmit, totalAmount}) => {
         </div>
         <div className="mb-4">
           <label
+            htmlFor="currencyType"
+            className="block text-sm font-medium text-gray-600"
+          >
+            Currency Type
+          </label>
+          <select
+            id="currencyType"
+            name="currencyType"
+            value={formData.currencyType}
+            onChange={handleChange}
+            className="mt-1 p-2 w-full border rounded-md"
+            required
+          >
+            <option value="" disabled>
+              Select Currency Type
+            </option>
+            <option selected value="slsh">
+              SLSH
+            </option>
+            <option value="usd">USD</option>
+          </select>
+        </div>
+
+        <div className="mb-4">
+          <label
             htmlFor="paymentMethod"
             className="block text-sm font-medium text-gray-600"
           >
@@ -183,7 +210,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({onSubmit, totalAmount}) => {
         </div>
         <div className="mb-4">
           <label
-            htmlFor="paymentMethod"
+            htmlFor="deliveryOption"
             className="block text-sm font-medium text-gray-600"
           >
             Delivery Option

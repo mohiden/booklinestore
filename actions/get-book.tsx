@@ -9,6 +9,7 @@ const getBook = async (id: string): Promise<IBook> => {
     title,
     price,
     quantity,
+    author,
     description,
     "language": language->{"name": name, "_id": _id},
     "images": images[].asset->{"url": url, "_id": _id},

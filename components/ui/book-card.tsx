@@ -45,7 +45,7 @@ const BookCard: React.FC<BookCardProps> = ({data}) => {
       <div className="aspect-square rounded-xl overflow-hidden bg-gray-200 relative hover:bg-gray-300 transition">
         <Image
           src={data.images[0].url}
-          alt=""
+          alt="image"
           fill
           className="rounded-md object-cover hover:opacity-90 transition-opacity"
         />
@@ -67,11 +67,18 @@ const BookCard: React.FC<BookCardProps> = ({data}) => {
       <div className="">
         <p className="font-semibold text-lg">{data.title}</p>
 
-        {data.language && (
-          <span className="inline-block px-3 py-1 text-xs font-semibold leading-none bg-blue-500 text-white rounded-full mt-2">
-            {data.language.name}
+        <div>
+          {data.language && (
+            <span className="inline-block px-3 py-1 text-xs font-semibold leading-none bg-blue-500 text-white rounded-full mt-2">
+              {data.language.name}
+            </span>
+          )}
+          {data.quantity === 0 && (
+          <span className="inline-block ml-2 px-3 py-1 text-xs font-semibold leading-none bg-red-500 text-white rounded-full mt-2">
+            out of stock
           </span>
-        )}
+          )}
+        </div>
 
         {/* <p className="text-sm text-gray-600 mt-1">{data.category?.name}</p> */}
       </div>
@@ -80,9 +87,9 @@ const BookCard: React.FC<BookCardProps> = ({data}) => {
       <div className="flex items-center justify-between">
         <Currency value={data?.price} />
         <div className="flex items-center gap-x-2">
-          <span className="text-yellow-400">★</span>{' '}
+          {/* <span className="text-yellow-400">★</span>{' '} */}
           {/* Rating star, you can replace this with a dynamic rating component */}
-          <span className="text-sm text-gray-500">(45 Reviews)</span>{' '}
+          {/* <span className="text-sm text-gray-500">(45 Reviews)</span>{' '} */}
           {/* Replace with dynamic review count */}
         </div>
       </div>

@@ -27,13 +27,17 @@ const Info: React.FC<InfoProps> = ({data}) => {
         </p>
       </div>
       <div className="mt-3 flex items-end justify-between">
-        <p className="text-2xl text-gray-900">{/* {data?.language._ref} */}</p>
+        <p className="text-2xl text-gray-900 ml-auto">{data?.language.name}</p>
       </div>
       <hr className="my-4" />
       <div className="flex flex-col gap-y-6">
         <div className="flex items-start gap-x-4">
           <h3 className="font-semibold text-black">Description:</h3>
           <div>{data?.description}</div>
+        </div>
+        <div className="flex items-start gap-x-4">
+          <h3 className="font-semibold text-black">Author</h3>
+          <div>{data?.author}</div>
         </div>
       </div>
       <div className="mt-10 flex items-center gap-x-3">
