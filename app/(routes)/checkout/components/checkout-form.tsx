@@ -23,7 +23,7 @@ export interface IFormData {
   currencyType: 'USD' | 'SLSH';
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({onSubmit, totalAmount}) => {
+const CheckoutForm: React.FC<CheckoutFormProps> = ({totalAmount}) => {
   const router = useRouter();
   const {items} = useCart();
   const [config, setConfig] = useState<IConfig | undefined>(undefined);
@@ -39,21 +39,16 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({onSubmit, totalAmount}) => {
     currencyType: 'USD',
   });
 
-  const [total, setTotal] = useState<number>(() => {
-    return formData.currencyType === 'USD'
-      ? totalAmount
-      : totalAmount * parseInt(config?.exchangeRate);
-  });
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const {name, value} = e.target;
     if (name === 'deliveryOption' && value === 'pickup') {
       setUsdTotal((prev) => prev - 1);
-      setSlshTotal((prev) => prev - config?.exchangeRate * 1);
+      setSlshTotal((prev) => prev - (config ? config.exchangeRate: 0));
     } else if (name === 'deliveryOption' && value === 'delivery') {
       setUsdTotal((prev) => prev + 1);
-      setSlshTotal((prev) => prev + config?.exchangeRate * 1);
+      setSlshTotal((prev) => prev + (config ? config.exchangeRate: 0));
     }
 
     setFormData((prevData) => ({...prevData, [name]: value}));
@@ -130,7 +125,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({onSubmit, totalAmount}) => {
     const conf = async () => {
       const res = await getConfig();
       setConfig(res);
-      setSlshTotal(totalAmount * parseInt(res.exchangeRate));
+      setSlshTotal(totalAmount * res.exchangeRate);
     };
     conf();
   }, [totalAmount]);
