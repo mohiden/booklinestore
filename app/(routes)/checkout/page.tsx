@@ -9,7 +9,6 @@ import getConfig from '@/actions/get-config';
 
 const CheckoutPage: React.FC = () => {
   const {items} = useCart();
-  const [config, setConfig] = useState<IConfig | undefined>(undefined);
   const handleFormSubmit = (data: IFormData) => {
     // Implement your logic to handle the form data (e.g., send to server)
     console.log(data);
@@ -18,16 +17,6 @@ const CheckoutPage: React.FC = () => {
   const totalAmount = items.reduce((total, item) => {
     return total + item.book.price * item.quantity;
   }, 0);
-
-  const conf = async () => {
-    const res = await getConfig();
-    console.log(res);
-    setConfig(res);
-  };
-
-  useEffect(() => {
-    conf();
-  }, []);
 
   return (
     <div className="container mx-auto mt-8 mb-20">

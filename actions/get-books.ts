@@ -23,7 +23,7 @@ const getBooks = async (
   }`,
         {languageId},
       )
-    : await client.fetch(groq`*[_type == "book"]{
+    : await client.fetch(groq`*[_type == "book" && quantity > 0]{
     _id,
     title,
     price,

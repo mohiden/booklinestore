@@ -9,15 +9,15 @@ export type SendResponse = {
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const {amount, gateway, account} = body;
+  const {amount, gateway, account, currency} = body;
   try {
     const response = await axios<SendResponse>({
       method: 'POST',
       url: 'https://api.sifalopay.com/gateway/',
       data: {
-        amount: '0.1',
+        amount: currency == 'USD' ? '0.1' : '100',
         gateway,
-        currency: 'USD',
+        currency,
         account,
       },
       auth: {

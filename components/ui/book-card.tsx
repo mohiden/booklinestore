@@ -42,12 +42,13 @@ const BookCard: React.FC<BookCardProps> = ({data}) => {
       className="bg-white group cursor-pointer rounded-xl border p-4 space-y-4 shadow-md hover:shadow-lg transition"
     >
       {/* Image & actions */}
-      <div className="aspect-square rounded-xl overflow-hidden bg-gray-200 relative hover:bg-gray-300 transition">
+      <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 relative hover:bg-gray-200 transition">
         <Image
           src={data.images[0].url}
           alt="image"
           fill
-          className="rounded-md object-cover hover:opacity-90 transition-opacity"
+          objectFit="cover"
+          className="rounded-md hover:opacity-90 transition-opacity"
         />
         <div className="opacity-0 group-hover:opacity-100 transition absolute w-full px-6 bottom-5">
           <div className="flex gap-x-4 justify-center">
@@ -74,9 +75,9 @@ const BookCard: React.FC<BookCardProps> = ({data}) => {
             </span>
           )}
           {data.quantity === 0 && (
-          <span className="inline-block ml-2 px-3 py-1 text-xs font-semibold leading-none bg-red-500 text-white rounded-full mt-2">
-            out of stock
-          </span>
+            <span className="inline-block ml-2 px-3 py-1 text-xs font-semibold leading-none bg-red-500 text-white rounded-full mt-2">
+              out of stock
+            </span>
           )}
         </div>
 

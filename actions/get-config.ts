@@ -7,7 +7,8 @@ const getConfig = async (): Promise<IConfig> => {
     groq`*[_type == "config"][0]{
     _id,
     exchangeRate,
-  }`);
+  }`,
+  );
 };
 
 export default getConfig;

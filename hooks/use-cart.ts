@@ -4,7 +4,7 @@ import {persist, createJSONStorage} from 'zustand/middleware';
 
 import {IBook, IOrderItem} from '@/types';
 
-export type CartItem = Omit<IOrderItem, 'book>;' | '_id'>;
+export type CartItem = Omit<IOrderItem, '_id'>;
 
 interface CartStore {
   items: CartItem[];
@@ -35,8 +35,11 @@ const useCart = create(
       increaseQty: (id: string) => {
         const currentItems = get().items;
         const existingItem = currentItems.find((item) => item.book._id === id);
-        
-        if (existingItem && existingItem.quantity < existingItem.book.quantity) {
+
+        if (
+          existingItem &&
+          existingItem.quantity < existingItem.book.quantity
+        ) {
           existingItem.quantity += 1;
           set({items: [...currentItems]});
           return;

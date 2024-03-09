@@ -1,8 +1,12 @@
+import getConfig from '@/actions/get-config';
 import {SendResponse} from '@/app/api/send/route';
 import Button from '@/components/ui/button';
 import useCart from '@/hooks/use-cart';
+import {sleep} from '@/lib/utils';
+import {IConfig, IOrder, IOrderItem} from '@/types';
 import axios from 'axios';
-import React, {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import React, {useEffect, useState} from 'react';
 import toast from 'react-hot-toast';
 
 interface CheckoutFormProps {
@@ -20,92 +24,126 @@ export interface IFormData {
 }
 
 const CheckoutForm: React.FC<CheckoutFormProps> = ({onSubmit, totalAmount}) => {
+  const router = useRouter();
   const {items} = useCart();
+  const [config, setConfig] = useState<IConfig | undefined>(undefined);
   const [loading, setLoading] = useState(false);
-  const [total, setTotal] = useState<number>(totalAmount);
+  const [slshTotal, setSlshTotal] = useState<number>(0);
+  const [usdTotal, setUsdTotal] = useState<number>(() => totalAmount);
   const [formData, setFormData] = useState<IFormData>({
     fullName: '',
     phoneNumber: '',
     address: '',
     paymentMethod: 'Zaad',
     deliveryOption: 'pickup',
-    currencyType: 'SLSH',
+    currencyType: 'USD',
   });
 
+  const [total, setTotal] = useState<number>(() => {
+    return formData.currencyType === 'USD'
+      ? totalAmount
+      : totalAmount * parseInt(config?.exchangeRate);
+  });
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const {name, value} = e.target;
     if (name === 'deliveryOption' && value === 'pickup') {
-      setTotal(totalAmount);
+      setUsdTotal((prev) => prev - 1);
+      setSlshTotal((prev) => prev - config?.exchangeRate * 1);
     } else if (name === 'deliveryOption' && value === 'delivery') {
-      setTotal((prev) => prev + 1);
+      setUsdTotal((prev) => prev + 1);
+      setSlshTotal((prev) => prev + config?.exchangeRate * 1);
     }
+
     setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    let orderItems: IOrderItem[] = items.map((item) => {
+      return {
+        book: item.book,
+        quantity: item.quantity,
+      };
+    });
+    let order: IOrder = {
+      orderItems,
+      fullName: formData.fullName,
+      phoneNumber: formData.phoneNumber,
+      address: formData.address,
+      paymentMethod: formData.paymentMethod,
+      deliveryOption: formData.deliveryOption,
+      currencyType: formData.currencyType,
+      totalPrice: formData.currencyType === 'USD' ? usdTotal : slshTotal,
+      orderDate: new Date().toISOString(),
+    };
     e.preventDefault();
-    console.log(items);
-    return;
+
+    const toastId = toast.loading('processing payment...');
     try {
       setLoading(true);
-      // onSubmit(formData);
-      const response = await axios<SendResponse>({
-        method: 'POST',
-        url: '/api/send',
-        data: {
-          amount: totalAmount,
-          account: formData.phoneNumber,
-          gateway: formData.paymentMethod,
-        },
+      const res = await axios.post<SendResponse>('/api/send', {
+        amount: order.totalPrice,
+        gateway: order.paymentMethod,
+        account: order.phoneNumber,
+        currency: order.currencyType,
       });
-      switch (response.data.code) {
+      switch (res.data.code) {
         case '601':
-          //send data to db/sanity
-
-          // const res = await axios<CheckoutResponse>({
-          //   method: 'POST',
-          //   url: '/api/checkout',
-          //   data: {
-          //     fullName: formData.fullName,
-          //     phoneNumber: formData.phoneNumber,
-          //     address: formData.address,
-          //     paymentMethod: formData.paymentMethod,
-          //     deliveryOption: formData.deliveryOption,
-          //     sid: response.data.sid,
-          //   },
-          // });
+          toast.loading('paid successfully...', {id: toastId});
+          try {
+            await sleep(3000);
+            toast.loading('placing order...', {id: toastId});
+            await axios.post('/api/checkout', {order});
+            toast.success('order placed successfully...', {id: toastId});
+            await sleep(3000);
+            setLoading(false);
+            toast.dismiss(toastId);
+            router.push('/checkout?success=true');
+          } catch {
+            router.push('/checkout?failed=true');
+          }
           break;
-        case '600':
-          toast.error('An error occurred');
-          break;
-        case '604':
-          toast.error('An error occurred');
-          break;
+        case '602':
+          toast.error('failed payment! 602', {id: toastId});
+          return;
+        case '603':
+          toast.error('failed payment! 603', {id: toastId});
+          return;
         default:
-          toast.error('An error occurred');
-          break;
+          toast.error('failed payment! 604', {id: toastId});
+          return;
       }
-      if (response.data.code !== '600') {
-        toast.error(response.data.response);
-      } else {
-      }
-    } catch (e) {
-      toast.error('An error occurred');
-      console.log(e);
+    } catch {
+      toast.error('failed payment!', {id: toastId});
+      router.push('/checkout?failed=true');
     } finally {
+      await sleep(3000);
+      toast.dismiss(toastId);
       setLoading(false);
     }
+
+    return;
   };
 
+  useEffect(() => {
+    const conf = async () => {
+      const res = await getConfig();
+      setConfig(res);
+      setSlshTotal(totalAmount * parseInt(res.exchangeRate));
+    };
+    conf();
+  }, [totalAmount]);
   return (
     <div className="max-w-md mx-auto mt-8">
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-2">Order Summary</h2>
         <div className="flex justify-between mb-2">
           <span className="text-gray-600">Total Amount:</span>
-          <span className="font-semibold">${total.toFixed(2)}</span>
+          <span className="font-semibold">
+            {formData.currencyType === 'USD' ? '$' : ''}
+            {formData.currencyType === 'USD' ? usdTotal : slshTotal}
+          </span>
         </div>
         <hr className="my-10" />
       </div>
@@ -179,10 +217,10 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({onSubmit, totalAmount}) => {
             <option value="" disabled>
               Select Currency Type
             </option>
-            <option selected value="slsh">
-              SLSH
+            <option selected value="SLSH">
+              SLSH morning
             </option>
-            <option value="usd">USD</option>
+            <option value="USD">USD</option>
           </select>
         </div>
 

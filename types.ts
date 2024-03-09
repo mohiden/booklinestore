@@ -1,5 +1,6 @@
 export interface IBook {
   _id: string;
+  _ref: string;
   title: string;
   description: string;
   isFeatured: boolean;
@@ -28,13 +29,13 @@ export interface ILanguage {
 }
 
 export interface IOrderItem {
-  _id: string;
+  // _id: string;
   book: IBook;
   quantity: number;
 }
 
 export interface IOrder {
-  _id: string;
+  // _id: string;
   orderItems: IOrderItem[];
   fullName: string;
   totalPrice: number;
@@ -42,6 +43,7 @@ export interface IOrder {
   phoneNumber: string;
   paymentMethod: string;
   deliveryOption: string;
+  currencyType: string;
   orderDate: string;
 }
 
