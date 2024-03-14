@@ -10,3 +10,7 @@ export function sleep(ms: number) {
     setTimeout(resolve, ms);
   });
 }
+export const formatter = new Intl.NumberFormat("en-US", {
+  style:"currency",
+  currency:'USD'
+});

@@ -16,6 +16,7 @@ interface BookCardProps {
 }
 
 const BookCard: React.FC<BookCardProps> = ({data}) => {
+  console.log('data', data)
   const previewModal = usePreviewModal();
   const cart = useCart();
   const router = useRouter();
@@ -81,7 +82,12 @@ const BookCard: React.FC<BookCardProps> = ({data}) => {
           )}
         </div>
 
-        {/* <p className="text-sm text-gray-600 mt-1">{data.category?.name}</p> */}
+        {
+          data.cateogries && (
+            data.cateogries.map((category) => (
+              <p className="text-sm text-gray-600 mt-1" key={category._id}>{category.name}</p>
+            )))
+        }
       </div>
 
       {/* Price & Review */}

@@ -36,10 +36,7 @@ const useCart = create(
         const currentItems = get().items;
         const existingItem = currentItems.find((item) => item.book._id === id);
 
-        if (
-          existingItem &&
-          existingItem.quantity < existingItem.book.quantity
-        ) {
+        if ( existingItem && existingItem.quantity < existingItem.book.quantity) {
           existingItem.quantity += 1;
           set({items: [...currentItems]});
           return;
@@ -66,6 +63,5 @@ const useCart = create(
   ),
 );
 
-// write me merge sort function here
 
 export default useCart;

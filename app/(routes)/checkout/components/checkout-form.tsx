@@ -45,10 +45,10 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({totalAmount}) => {
     const {name, value} = e.target;
     if (name === 'deliveryOption' && value === 'pickup') {
       setUsdTotal((prev) => prev - 1);
-      setSlshTotal((prev) => prev - (config ? config.exchangeRate: 0));
+      setSlshTotal((prev) => prev - (config ? config.exchangeRate : 0));
     } else if (name === 'deliveryOption' && value === 'delivery') {
       setUsdTotal((prev) => prev + 1);
-      setSlshTotal((prev) => prev + (config ? config.exchangeRate: 0));
+      setSlshTotal((prev) => prev + (config ? config.exchangeRate : 0));
     }
 
     setFormData((prevData) => ({...prevData, [name]: value}));

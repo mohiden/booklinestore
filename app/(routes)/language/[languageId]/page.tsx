@@ -24,7 +24,7 @@ const LanguagePage: React.FC<LanguagePageProps> = async ({
   params,
   searchParams,
 }) => {
-  const books = await getBooks(params.languageId, searchParams.categoryId);
+  const books = await getBooks();
   const languages = await getLanguages();
   const categories = await getCategories();
 

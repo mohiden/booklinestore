@@ -39,6 +39,12 @@ const Info: React.FC<InfoProps> = ({data}) => {
           <h3 className="font-semibold text-black">Author</h3>
           <div>{data?.author}</div>
         </div>
+        {data.cateogries &&
+          data.cateogries.map((category) => (
+            <p className="text-sm text-gray-600 mt-1" key={category._id}>
+              {category.name}
+            </p>
+          ))}
       </div>
       <div className="mt-10 flex items-center gap-x-3">
         <Button onClick={onAddToCart} className="flex items-center gap-x-2">

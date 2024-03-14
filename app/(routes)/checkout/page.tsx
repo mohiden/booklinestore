@@ -1,11 +1,8 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
 import CheckoutForm, {IFormData} from './components/checkout-form';
 import Container from '@/components/ui/container';
 import useCart from '@/hooks/use-cart';
-import {IConfig} from '@/types';
-import getConfig from '@/actions/get-config';
 
 const CheckoutPage: React.FC = () => {
   const {items} = useCart();
