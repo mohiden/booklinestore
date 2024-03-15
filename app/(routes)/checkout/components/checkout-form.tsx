@@ -90,13 +90,13 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({totalAmount}) => {
             await sleep(3000);
             toast.loading('placing order...', {id: toastId});
             await axios.post('/api/checkout', {order});
-            toast.success('order placed successfully...', {id: toastId});
-            await sleep(3000);
-            setLoading(false);
+            // toast.success('order placed successfully...', {id: toastId});
+            // await sleep(3000);
             toast.dismiss(toastId);
-            router.push('/checkout?success=true');
+            setLoading(false);
+            router.replace('/cart?success=true');
           } catch {
-            router.push('/checkout?failed=true');
+            router.replace('/cart?failed=true');
           }
           break;
         case '602':
@@ -111,7 +111,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({totalAmount}) => {
       }
     } catch {
       toast.error('failed payment!', {id: toastId});
-      router.push('/checkout?failed=true');
+      router.replace('/cart?failed=true');
     } finally {
       await sleep(3000);
       toast.dismiss(toastId);
@@ -213,7 +213,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({totalAmount}) => {
               Select Currency Type
             </option>
             <option selected value="SLSH">
-              SLSH morning
+              SLSH
             </option>
             <option value="USD">USD</option>
           </select>
